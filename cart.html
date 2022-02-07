@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <style>
+    /* h2 {
+      text-align: center;
+    } */
+    #cart {
+        display: grid;
+        /* width: 80vw; */
+        /* margin: auto; */
+        /* background-color: springgreen; */
+        /* grid-template-columns: repeat(3,auto); */
+        row-gap: 1.8em;
+      }
+      #cart > div {
+        /* background-color: steelblue; */
+        width: 300px;
+        border: 1px solid rgb(163, 163, 163);
+        padding: 0.5em;
+      }
+      #cart > div > img {
+        width: 300px;
+        height: 250px;
+        object-fit: cover;
+      }
+      #checkout-link {
+        /* display: flex;
+        justify-content: center; */
+        padding: 2em;
+      }
+  </style>
+
+  <body>
+    <div>
+
+      <h2 id="total">
+        <!--Show cart total ONLY here-->
+      </h2>
+
+    </div>
+    <div id="cart">
+      <!--Show dishes added to cart here-->
+      <!-- add an remove button to each dish so that you can remove that dish from cart, give it HTML id as 'remove' -->
+
+    </div>
+
+    <div id="checkout-link"><a href="checkout.html"><button>Checkout</button></a></div>
+  </body>
+
+</html>
+
+<script>
+  let cartData = JSON.parse(localStorage.getItem('cart'));
+  function displayTotal() {  
+    let total = 0;
+    for (let i = 0; i < cartData.length; i++) {
+      let price = cartData[i].price.substr(1);
+      
+      price = Number(price);
+
+      total += price;
+    }
+    document.getElementById('total').textContent = `Amount to be paid: ${total}`;
+  }
+  displayTotal();
+
+  function display() {
+    for (let i = 0; i < cartData.length; i++) {
+      let innerdiv = document.createElement('div');
+      let image = document.createElement('img');
+      let name = document.createElement('p');
+      let price = document.createElement('p');
+      let remove = document.createElement('button');
+
+      image.setAttribute('src',cartData[i].strMealThumb);
+      name.textContent = cartData[i].strMeal;
+      price.textContent = cartData[i].price;
+      remove.textContent = 'Remove';
+
+      // let nameForRemove = cartData[i].strMeal.replace(/ /g, "");
+      // console.log(nameForRemove)
+      // console.log(cartData[i].idMeal)
+      remove.setAttribute('id','remove');
+      remove.setAttribute('onclick',`remove(${cartData[i].idMeal})`);
+
+      innerdiv.setAttribute('id',`${cartData[i].idMeal}`);
+
+      innerdiv.append(image,name,price,remove);
+      document.getElementById('cart').append(innerdiv);
+    }
+  }
+  display();
+
+  function remove(id) {
+    for (let i = 0; i < cartData.length; i++) {
+      if (id == cartData[i].idMeal) {
+        cartData.splice(i,1);
+        // console.log(cartData);
+      }
+    }
+    document.getElementById(id).setAttribute('style','display:none');
+    // console.log(id);
+    displayTotal();
+  }
+</script>

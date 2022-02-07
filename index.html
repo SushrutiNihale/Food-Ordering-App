@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+      #navbar {
+        display: flex;
+        width: 85vw;
+        margin: 1em auto;
+        border-radius: 0.2em;
+        background-color: midnightblue;
+        color: snow;
+        padding: 0.5em;
+        justify-content: flex-end;
+      }
+      #navbar > div {
+        padding: 0 1em;
+      }
+      #navbar > a {
+        color: snow;
+        padding: 0 1em;
+      }
+      #menu {
+        display: grid;
+        width: 80vw;
+        margin: auto;
+        /* background-color: springgreen; */
+        grid-template-columns: repeat(3,auto);
+        row-gap: 1.8em;
+      }
+      #menu > div {
+        /* background-color: steelblue; */
+        margin: auto;
+        border: 1px solid rgb(163, 163, 163);
+        padding: 0.5em;
+      }
+      #menu > div > img {
+        width: 300px;
+        height: 250px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="navbar">
+      <!--Add menu divs here-->
+      <div></div>
+      <div>Login</div>
+      <div>Sign Up</div>
+      <div>Menu</div>
+      <a href="cart.html">Cart</a>
+      <div id="count"></div>
+    </div>
+
+    <div id="menu">
+
+      <!--Show indian dishes here in grid format-->
+      <!-- add an add to cart button to each dish, give it HTML id as 'addtocart' -->
+
+    </div>
+  </body>
+
+</html>
+
+<script>
+  let data;
+  async function getData() {
+    let res = await fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a=Indian');
+    data = await res.json();
+    data = data.meals;
+
+    for (let i = 0; i < data.length; i++) {
+      let innerdiv = document.createElement('div');
+      let image = document.createElement('img');
+      let name = document.createElement('p');
+      let price = document.createElement('p');
+      let cart = document.createElement('button');
+
+      image.setAttribute('src',data[i].strMealThumb);
+      name.textContent = data[i].strMeal;
+      price.textContent = `$${Math.floor(Math.random() * (500 - 100) + 100)}`;
+      cart.textContent = 'Add to cart';
+
+      cart.setAttribute('id','addtocart');
+      cart.setAttribute('class','addtocart');
+      cart.setAttribute('onclick',`addToCart(${i})`);
+      price.setAttribute('id',`price${i}`)
+      innerdiv.append(image,name,price,cart);
+      document.getElementById('menu').append(innerdiv);
+      // console.log(data[i]);
+    }
+    
+    // console.log(document.getElementsByClassName('addtocart'))
+    
+  }
+  getData();
+
+  let itemsInCart = [];
+  function addToCart(num) {
+    for (let key in data) {
+      if (num == key) {
+        itemsInCart.push(data[key]);
+      }
+      
+      // console.log(typeof(key))
+    }
+    let amount = document.getElementById(`price${num}`);
+    console.log(amount);
+    itemsInCart[itemsInCart.length-1].price = amount.textContent;
+
+    localStorage.setItem('cart',JSON.stringify(itemsInCart));
+
+    let count = document.getElementById('count').textContent;
+    if (count == "") {
+      count = 1;
+    } else {
+      count++;
+    }
+    document.getElementById('count').textContent = count;
+  }
+  
+</script>
